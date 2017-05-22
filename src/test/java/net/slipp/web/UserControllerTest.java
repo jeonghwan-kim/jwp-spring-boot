@@ -29,6 +29,7 @@ public class UserControllerTest extends AbstractAcceptanceTest {
 	@Before
 	public void setup() {
 		testUser = userRepository.save(new User("sanjigi", "password", "name", "javajigi@slipp.net"));
+		template = template.withBasicAuth(testUser.getUserId(), testUser.getPassword());
 	}
 	
 	@Test

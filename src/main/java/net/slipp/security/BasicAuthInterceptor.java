@@ -1,0 +1,50 @@
+package net.slipp.security;
+
+import net.slipp.domain.User;
+import net.slipp.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.Charset;
+import java.util.Base64;
+
+/**
+ * Created by woowahan on 2017. 5. 22..
+ */
+public class BasicAuthInterceptor extends HandlerInterceptorAdapter {
+    private static final Logger log = LoggerFactory.getLogger(BasicAuthInterceptor.class);
+
+    @Autowired
+    private UserService userService;
+
+//    public BasicAuthInterceptor(@Autowired UserService userService) {
+//        this.userService = userService;
+//    }
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        String authorization = request.getHeader("Authorization");
+        log.debug("preHandle() Authorization: {}", authorization);
+        if (authorization == null || !authorization.startsWith("Basic")) {
+            return true;
+        }
+
+        String base64Credentials = authorization.substring("Basic".length()).trim();
+        String credentials = new String(Base64.getDecoder().decode(base64Credentials), Charset.forName("UTF-8"));
+        String[] values = credentials.split(":");
+        log.debug("preHandle() username: {}, password: {}", values[0], values[1]);
+
+        try {
+            User user = userService.login(values[0], values[1]);
+            log.debug("Login success: {}", user);
+            request.getSession().setAttribute(HttpSessionUtils.USER_SESSION_KEY, user);
+            return true;
+        } catch (IllegalStateException e) {
+            return true;
+        }
+    }
+}
