@@ -25,28 +25,36 @@ public class Question {
 		return id;
 	}
 
-	public void setId(long id) {
+	public Question setId(long id) {
 		this.id = id;
+		return this;
 	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	public void setTitle(String title) {
+	public Question setTitle(String title) {
 		this.title = title;
+		return this;
 	}
 
 	public String getContents() {
 		return contents;
 	}
 
-	public void setContents(String contents) {
+	public Question setContents(String contents) {
 		this.contents = contents;
+		return this;
 	}
-	
-	public void writeBy(User loginUser) {
+
+	public Question writeBy(User loginUser) {
 		this.writer = loginUser;
+		return this;
+	}
+
+	public Boolean isOwner(User writer) {
+		return this.writer.getId() == writer.getId();
 	}
 
 	@Override
