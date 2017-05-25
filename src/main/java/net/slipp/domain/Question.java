@@ -1,11 +1,7 @@
 package net.slipp.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ForeignKey;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Question {
@@ -20,6 +16,9 @@ public class Question {
 	@ManyToOne
 	@JoinColumn(foreignKey = @ForeignKey(name = "fk_question_writer"))
 	private User writer;
+
+	@OneToMany
+	private List<Answer> answers;
 
 	public long getId() {
 		return id;
